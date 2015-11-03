@@ -22,7 +22,7 @@ public class BasePreference {
     }
 
     public static BasePreference getInstance(Context context) {
-        if(instance==null) {
+        if (instance == null) {
             instance = new BasePreference(context);
         }
         return instance;
@@ -33,21 +33,37 @@ public class BasePreference {
     public SharedPreferences getPref() {
         return preferences;
     }
+
     public SharedPreferences.Editor edit() {
         return getPref().edit();
     }
 
-    // Getter and Setter
+    // Getter and Setter - String
 
     public String get(String key) {
         return get(key, "");
     }
+
     public String get(String key, String defaultVal) {
         return getPref().getString(key, defaultVal);
     }
 
     public void put(String key, String val) {
         edit().putString(key, val).commit();
+    }
+
+    // Getter and Setter - Int
+
+    public int getInt(String key) {
+        return getInt(key, 0);
+    }
+
+    public int getInt(String key, int defaultVal) {
+        return getPref().getInt(key, defaultVal);
+    }
+
+    public void putInt(String key, int val) {
+        edit().putInt(key, val).commit();
     }
 
     // Other Functions
