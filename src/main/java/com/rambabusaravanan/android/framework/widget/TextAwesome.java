@@ -11,8 +11,9 @@ import android.widget.TextView;
  */
 public class TextAwesome extends TextView {
 
-    private final static String NAME = "FONT_AWESOME";
-    private static LruCache<String, Typeface> typefaceCache = new LruCache<String, Typeface>(12);
+    private final static String KEY = "FONT_AWESOME";
+    private final static String PATH = "font/fontawesome_webfont.ttf";
+    private static LruCache<String, Typeface> cache = new LruCache<>(12);
 
     public TextAwesome(Context context) {
         super(context);
@@ -25,10 +26,10 @@ public class TextAwesome extends TextView {
     }
 
     public void init() {
-        Typeface typeface = typefaceCache.get(NAME);
+        Typeface typeface = cache.get(KEY);
         if (typeface == null) {
-            typeface = Typeface.createFromAsset(getContext().getAssets(), "font/fontawesome_webfont.ttf");
-            typefaceCache.put(NAME, typeface);
+            typeface = Typeface.createFromAsset(getContext().getAssets(), PATH);
+            cache.put(KEY, typeface);
         }
         setTypeface(typeface);
     }

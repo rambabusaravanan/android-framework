@@ -1,4 +1,4 @@
-package com.rambabusaravanan.android.framework.utils;
+package com.rambabusaravanan.android.framework.base;
 
 /**
  * Created by Andro Babu on Oct 14, 2015.

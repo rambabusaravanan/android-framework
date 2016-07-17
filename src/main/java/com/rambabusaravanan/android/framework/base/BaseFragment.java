@@ -1,53 +1,26 @@
-package com.rambabusaravanan.android.framework.utils;
+package com.rambabusaravanan.android.framework.base;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.rambabusaravanan.android.framework.network.Network;
-
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import com.rambabusaravanan.android.framework.R;
+import com.rambabusaravanan.android.framework.utils.Utils;
 
 /**
  * Created by Andro Babu on Oct 01, 2015.
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    protected ProgressDialog networkProgress;
-    protected Context app_context, context;
-
-    // ANDROID FRAGMENT
-
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        app_context = getActivity().getApplicationContext();
-        context = getActivity();
-        ((BaseActivity)context).setOnBackPressedListener(onBackPressedListener);
-
-        networkProgress = new ProgressDialog(context);
-        networkProgress.setMessage("Loading ..");
-        return onCreateBaseView(inflater, container, savedInstanceState);
-    }
-
-    public View onCreateBaseView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
+    //    protected ProgressDialog networkProgress;
+    protected Context appContext, context;
+    protected View rootView;
     OnBackPressedListener onBackPressedListener = new OnBackPressedListener() {
         @Override
         public boolean listenBackPressed() {
@@ -55,6 +28,25 @@ public abstract class BaseFragment extends Fragment {
             return onBack();
         }
     };
+
+    // ANDROID FRAGMENT
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        appContext = getActivity().getApplicationContext();
+        context = getActivity();
+        ((BaseActivity)context).setOnBackPressedListener(onBackPressedListener);
+        rootView = inflater.inflate(getLayoutId(), container, false);
+//        networkProgress = new ProgressDialog(context);
+//        networkProgress.setMessage("Loading ..");
+        return rootView;
+    }
+
+    // Handle Back Press
+
+    protected abstract int getLayoutId();
 
     public boolean onBack() {
         Utils.log("BaseFragment : onBack - return false");
@@ -64,18 +56,48 @@ public abstract class BaseFragment extends Fragment {
     // ANDROID UTILS
 
     public void toast(String message) {
-        Toast.makeText(app_context, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show();
     }
 
-    public int getScreenHeight() {
-        return getResources().getDisplayMetrics().heightPixels;
+    public void toast(int stringResId) {
+        Toast.makeText(appContext, getString(stringResId), Toast.LENGTH_SHORT).show();
     }
-    public int getScreenWidth() {
-        return getResources().getDisplayMetrics().widthPixels;
+
+    // PULL TO REFRESH
+
+    protected void setSwipeRefreshLayout(int resId) {
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(resId);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setColorSchemeResources(R.color.holo_red_light,
+                    R.color.holo_blue_bright,
+                    R.color.holo_orange_light,
+                    R.color.holo_green_light);
+        }
+
     }
+
+    protected void stopRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    protected boolean getRefreshingStatus() {
+        return swipeRefreshLayout.isRefreshing();
+    }
+
+    /*
+     * This should be overridden
+     */
+    @Override
+    public void onRefresh() {
+        stopRefresh();
+    }
+
+
 
     // NETWORK
 
+/*
     public String encodeUrl(String query) {
         try {
             return URLEncoder.encode(query, "utf-8");
@@ -115,4 +137,5 @@ public abstract class BaseFragment extends Fragment {
 
     protected void handleResponse(String url, JSONObject response) { }
     protected void handleError(String url, Exception exception) { }
+*/
 }

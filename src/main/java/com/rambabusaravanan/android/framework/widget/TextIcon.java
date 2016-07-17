@@ -11,27 +11,26 @@ import android.widget.TextView;
  */
 public class TextIcon extends TextView {
 
+    private final static String KEY = "FONT_MATERIAL";
+    private final static String PATH = "font/MaterialIcons-Regular.ttf";
     private static LruCache<String, Typeface> cache = new LruCache<>(12);
-    private static String key = "FONT_MATERIAL";
-    private static String path = "font/MaterialIcons-Regular.ttf";
 
     public TextIcon(Context context) {
         super(context);
-        this.init();
+        init();
     }
 
     public TextIcon(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.init();
+        init();
     }
 
     public void init() {
-        Typeface typeface = cache.get(key);
+        Typeface typeface = cache.get(KEY);
         if (typeface == null) {
-            typeface = Typeface.createFromAsset(this.getContext().getAssets(), path);
-            cache.put(key, typeface);
+            typeface = Typeface.createFromAsset(getContext().getAssets(), PATH);
+            cache.put(KEY, typeface);
         }
-
-        this.setTypeface(typeface);
+        setTypeface(typeface);
     }
 }

@@ -1,29 +1,23 @@
-package com.rambabusaravanan.android.framework.utils;
+package com.rambabusaravanan.android.framework.base;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.rambabusaravanan.android.framework.network.Network;
-
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import com.rambabusaravanan.android.framework.R;
+import com.rambabusaravanan.android.framework.utils.Utils;
 
 /**
  * Created by Andro Babu on Oct 01, 2015.
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    protected ProgressDialog networkProgress;
-    protected Context app_context, context;
+    //    protected ProgressDialog networkProgress;
+    protected Context appContext, context;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     // ANDROID ACTIVITY
 
@@ -32,12 +26,25 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app_context = getApplicationContext();
+        appContext = getApplicationContext();
         context = this;
 
-        networkProgress = new ProgressDialog(context);
-        networkProgress.setMessage("Loading ..");
+//        networkProgress = new ProgressDialog(context);
+//        networkProgress.setMessage("Loading ..");
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    // Handle Back Press
 
     public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
         this.onBackPressedListener = onBackPressedListener;
@@ -56,8 +63,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (fragCount != 0) {
                 Utils.log("BaseActivity : onBackPressed (popBackStack)");
                 getSupportFragmentManager().popBackStack();
-            }
-            else {
+            } else {
                 Utils.log("BaseActivity : onBackPressed (default)");
                 onBack();
             }
@@ -72,19 +78,49 @@ public abstract class BaseActivity extends AppCompatActivity {
     // ANDROID UTILS
 
     public void toast(String message) {
-        Toast.makeText(app_context, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show();
     }
 
-    public int getScreenHeight() {
-        return getResources().getDisplayMetrics().heightPixels;
+    public void toast(int stringResId) {
+        Toast.makeText(appContext, getString(stringResId), Toast.LENGTH_SHORT).show();
     }
 
-    public int getScreenWidth() {
-        return getResources().getDisplayMetrics().widthPixels;
+    // PULL TO REFRESH
+
+    protected void setSwipeRefreshLayout(int resId) {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(resId);
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setColorSchemeResources(R.color.holo_red_light,
+                    R.color.holo_blue_bright,
+                    R.color.holo_orange_light,
+                    R.color.holo_green_light);
+        }
+
     }
+
+    protected void stopRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    protected boolean getRefreshingStatus() {
+        return swipeRefreshLayout.isRefreshing();
+    }
+
+    /*
+     * This should be overridden
+     */
+    @Override
+    public void onRefresh() {
+        stopRefresh();
+    }
+
+
+
 
     // NETWORK
 
+/*
     public String encodeUrl(String query) {
         try {
             return URLEncoder.encode(query, "utf-8");
@@ -129,4 +165,5 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void handleError(String url, Exception exception) {
     }
+    */
 }

@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
  */
 public class BasePreference {
 
-    private SharedPreferences preferences;
     private static BasePreference instance;
+    private SharedPreferences preferences;
 
     // Constructor and Instance
 
@@ -17,8 +17,8 @@ public class BasePreference {
         this.preferences = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
     }
 
-    public BasePreference(Context context, String FILE_NAME) {
-        this.preferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+    public BasePreference(Context context, String fileName) {
+        this.preferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
     }
 
     public static BasePreference getInstance(Context context) {
@@ -66,10 +66,30 @@ public class BasePreference {
         edit().putInt(key, val).commit();
     }
 
+    // Getter and Setter - Boolean
+
+    public boolean getBoolean(String key) {
+        return getBoolean(key, false);
+    }
+
+    public boolean getBoolean(String key, boolean defaultVal) {
+        return getPref().getBoolean(key, defaultVal);
+    }
+
+    public void putBoolean(String key, boolean val) {
+        edit().putBoolean(key, val).commit();
+    }
+
+
     // Other Functions
 
     public void clearAll() {
         getPref().edit().clear().commit();
     }
+
+    public void remove(String key) {
+        edit().remove(key).commit();
+    }
+
 
 }
