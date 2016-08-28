@@ -167,7 +167,7 @@ public abstract class BaseRequest<T extends BaseResponse> {
             @Override
             public void onResponse(T response) {
                 Utils.log(getMethod(), ' ', BaseRequest.this.getClass().getSimpleName(), " <<< S <<< ", response);
-                if (progress != null)
+                if (progress != null && progress.isShowing())
                     progress.dismiss();
                 if (defaultListener != null)
                     defaultListener.onSuccess(response);
@@ -188,7 +188,7 @@ public abstract class BaseRequest<T extends BaseResponse> {
                 }
                 Utils.log(getMethod(), ' ', BaseRequest.this.getClass().getSimpleName(), " <<< E <<< ", error);
                 Utils.log(getMethod(), ' ', BaseRequest.this.getClass().getSimpleName(), " <<< E <<< ", response);
-                if (progress != null)
+                if (progress != null && progress.isShowing())
                     progress.dismiss();
                 if (defaultListener != null)
                     defaultListener.onError(response, error);
