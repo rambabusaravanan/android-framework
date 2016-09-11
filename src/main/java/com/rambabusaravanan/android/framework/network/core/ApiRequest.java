@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.rambabusaravanan.android.framework.utils.BasePreference;
 
 import org.apache.http.HttpEntity;
@@ -98,7 +99,7 @@ public class ApiRequest<T> extends Request<T> {
             try {
                 return requestBody.getBytes("utf-8");
             } catch (UnsupportedEncodingException e) {
-                VolleyLog.wtf("Unsupported Encoding while getBody() trying to get the bytes using 'utf-8' @ " + getUrl() + " for %s", requestBody);
+                VolleyLog.wtf("Unsupported Encoding while getBody() trying to get the bytes using 'utf-8' @ %s for %s", getUrl(), requestBody);
                 e.printStackTrace();
                 return null;
             }
@@ -122,7 +123,11 @@ public class ApiRequest<T> extends Request<T> {
             String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
             return Response.success(new Gson().fromJson(json, clazz), HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {
-            VolleyLog.wtf("Unsupported Encoding while parseNetworkResponse() trying to parse the response bytes using '%s' @ " + getUrl() + " for %s",HttpHeaderParser.parseCharset(response.headers), requestBody);
+            VolleyLog.wtf("Unsupported Encoding while parseNetworkResponse() trying to parse the response bytes using '%s' @ %s for %s", HttpHeaderParser.parseCharset(response.headers), getUrl(), requestBody);
+            e.printStackTrace();
+            return Response.error(new ParseError(e));
+        } catch (JsonSyntaxException e) {
+            VolleyLog.wtf("Unsupported JsonSyntax while parseNetworkResponse() trying to parse the response bytes using '%s' @ %s for %s", HttpHeaderParser.parseCharset(response.headers), getUrl(), requestBody);
             e.printStackTrace();
             return Response.error(new ParseError(e));
         }

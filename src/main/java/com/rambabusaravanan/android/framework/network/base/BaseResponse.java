@@ -26,4 +26,8 @@ public class BaseResponse implements Serializable {
             return new JSONObject();
         }
     }
+
+    public static <T extends BaseResponse> T fromJsonString(String jsonString, Class<T> clazz) {
+        return new Gson().fromJson(jsonString, clazz);
+    }
 }
