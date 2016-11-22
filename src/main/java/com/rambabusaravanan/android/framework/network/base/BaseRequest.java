@@ -44,6 +44,7 @@ public abstract class BaseRequest<T extends BaseResponse> {
     private ProgressDialog progress;
     private CharSequence labelLoading = "Loading ..";
     private HashMap<String, String> headers;
+    private Boolean shouldCache;
 
     public BaseRequest(Context context) {
         this.context = context;
@@ -56,6 +57,11 @@ public abstract class BaseRequest<T extends BaseResponse> {
 
     public BaseRequest setHeaders(HashMap<String, String> headers) {
         this.headers = headers;
+        return this;
+    }
+
+    public BaseRequest setShouldCache(Boolean shouldCache) {
+        this.shouldCache = shouldCache;
         return this;
     }
 
@@ -200,6 +206,8 @@ public abstract class BaseRequest<T extends BaseResponse> {
             request.setRetryPolicy(retryPolicy);
         if (headers != null)
             request.setHeaders(headers);
+        if (shouldCache != null)
+            request.setShouldCache(shouldCache);
         Network.getInstance(context).addToRequestQueue(request);
     }
 
